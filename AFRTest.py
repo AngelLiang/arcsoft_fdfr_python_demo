@@ -1,6 +1,6 @@
-#-*- encoding=utf-8 -*-
+# coding=utf-8
 
-from arcsoft import CLibrary, ASVL_COLOR_FORMAT, ASVLOFFSCREEN,c_ubyte_p,FaceInfo
+from arcsoft import CLibrary, ASVL_COLOR_FORMAT, ASVLOFFSCREEN, c_ubyte_p, FaceInfo
 from arcsoft.utils import BufferInfo, ImageLoader
 from arcsoft.AFD_FSDKLibrary import *
 from arcsoft.AFR_FSDKLibrary import *
@@ -15,11 +15,15 @@ FD_WORKBUF_SIZE = 20 * 1024 * 1024
 FR_WORKBUF_SIZE = 40 * 1024 * 1024
 MAX_FACE_NUM = 50
 
+bUseYUVFile = False
+
+
 def doFaceDetection(hFDEngine, inputImg):
     faceInfo = []
 
     pFaceRes = POINTER(AFD_FSDK_FACERES)()
-    ret = AFD_FSDK_StillImageFaceDetection(hFDEngine, byref(inputImg), byref(pFaceRes))
+    ret = AFD_FSDK_StillImageFaceDetection(hFDEngine, byref(inputImg),
+                                           byref(pFaceRes))
     if ret != 0:
         print(u'AFD_FSDK_StillImageFaceDetection 0x{0:x}'.format(ret))
         return faceInfo
@@ -29,9 +33,11 @@ def doFaceDetection(hFDEngine, inputImg):
         for i in range(0, faceRes.nFace):
             rect = faceRes.rcFace[i]
             orient = faceRes.lfaceOrient[i]
-            faceInfo.append(FaceInfo(rect.left,rect.top,rect.right,rect.bottom,orient))
+            faceInfo.append(
+                FaceInfo(rect.left, rect.top, rect.right, rect.bottom, orient))
 
     return faceInfo
+
 
 def extractFRFeature(hFREngine, inputImg, faceInfo):
     """
@@ -45,7 +51,8 @@ def extractFRFeature(hFREngine, inputImg, faceInfo):
     faceinput.rcFace.bottom = faceInfo.bottom
 
     faceFeature = AFR_FSDK_FACEMODEL()
-    ret = AFR_FSDK_ExtractFRFeature(hFREngine, inputImg, faceinput, faceFeature)
+    ret = AFR_FSDK_ExtractFRFeature(hFREngine, inputImg, faceinput,
+                                    faceFeature)
     if ret != 0:
         print(u'AFR_FSDK_ExtractFRFeature ret 0x{0:x}'.format(ret))
         return None
@@ -85,7 +92,8 @@ def compareFaceSimilarity(hFDEngine, hFREngine, inputImgA, inputImgB):
 
     # calc similarity between faceA and faceB
     fSimilScore = c_float(0.0)
-    ret = AFR_FSDK_FacePairMatching(hFREngine, faceFeatureA, faceFeatureB, byref(fSimilScore))
+    ret = AFR_FSDK_FacePairMatching(hFREngine, faceFeatureA, faceFeatureB,
+                                    byref(fSimilScore))
     faceFeatureA.freeUnmanaged()
     faceFeatureB.freeUnmanaged()
     if ret != 0:
@@ -93,6 +101,7 @@ def compareFaceSimilarity(hFDEngine, hFREngine, inputImgA, inputImgB):
         return 0.0
 
     return fSimilScore
+
 
 def loadYUVImage(yuv_filePath, yuv_width, yuv_height, yuv_format):
     """
@@ -139,17 +148,25 @@ def loadYUVImage(yuv_filePath, yuv_width, yuv_height, yuv_format):
 
     if ASVL_COLOR_FORMAT.ASVL_PAF_I420 == inputImg.u32PixelArrayFormat:
         inputImg.ppu8Plane[0] = cast(imagedata, c_ubyte_p)
-        inputImg.ppu8Plane[1] = cast(addressof(inputImg.ppu8Plane[0].contents) + (inputImg.pi32Pitch[0] * inputImg.i32Height), c_ubyte_p)
-        inputImg.ppu8Plane[2] = cast(addressof(inputImg.ppu8Plane[1].contents) + (inputImg.pi32Pitch[1] * inputImg.i32Height // 2), c_ubyte_p)
+        inputImg.ppu8Plane[1] = cast(
+            addressof(inputImg.ppu8Plane[0].contents) +
+            (inputImg.pi32Pitch[0] * inputImg.i32Height), c_ubyte_p)
+        inputImg.ppu8Plane[2] = cast(
+            addressof(inputImg.ppu8Plane[1].contents) +
+            (inputImg.pi32Pitch[1] * inputImg.i32Height // 2), c_ubyte_p)
         inputImg.ppu8Plane[3] = cast(0, c_ubyte_p)
     elif ASVL_COLOR_FORMAT.ASVL_PAF_NV12 == inputImg.u32PixelArrayFormat:
         inputImg.ppu8Plane[0] = cast(imagedata, c_ubyte_p)
-        inputImg.ppu8Plane[1] = cast(addressof(inputImg.ppu8Plane[0].contents) + (inputImg.pi32Pitch[0] * inputImg.i32Height), c_ubyte_p)
+        inputImg.ppu8Plane[1] = cast(
+            addressof(inputImg.ppu8Plane[0].contents) +
+            (inputImg.pi32Pitch[0] * inputImg.i32Height), c_ubyte_p)
         inputImg.ppu8Plane[2] = cast(0, c_ubyte_p)
         inputImg.ppu8Plane[3] = cast(0, c_ubyte_p)
     elif ASVL_COLOR_FORMAT.ASVL_PAF_NV21 == inputImg.u32PixelArrayFormat:
         inputImg.ppu8Plane[0] = cast(imagedata, c_ubyte_p)
-        inputImg.ppu8Plane[1] = cast(addressof(inputImg.ppu8Plane[0].contents) + (inputImg.pi32Pitch[0] * inputImg.i32Height), c_ubyte_p)
+        inputImg.ppu8Plane[1] = cast(
+            addressof(inputImg.ppu8Plane[0].contents) +
+            (inputImg.pi32Pitch[0] * inputImg.i32Height), c_ubyte_p)
         inputImg.ppu8Plane[2] = cast(0, c_ubyte_p)
         inputImg.ppu8Plane[3] = cast(0, c_ubyte_p)
     elif ASVL_COLOR_FORMAT.ASVL_PAF_YUYV == inputImg.u32PixelArrayFormat:
@@ -164,6 +181,7 @@ def loadYUVImage(yuv_filePath, yuv_width, yuv_height, yuv_format):
     inputImg.gc_ppu8Plane0 = imagedata
     return inputImg
 
+
 def loadImage(filePath):
     """
     加载图片
@@ -177,11 +195,132 @@ def loadImage(filePath):
     inputImg.pi32Pitch[1] = inputImg.i32Width // 2
     inputImg.pi32Pitch[2] = inputImg.i32Width // 2
     inputImg.ppu8Plane[0] = cast(bufferInfo.buffer, c_ubyte_p)
-    inputImg.ppu8Plane[1] = cast(addressof(inputImg.ppu8Plane[0].contents) + (inputImg.pi32Pitch[0] * inputImg.i32Height), c_ubyte_p)
-    inputImg.ppu8Plane[2] = cast(addressof(inputImg.ppu8Plane[1].contents) + (inputImg.pi32Pitch[1] * inputImg.i32Height // 2), c_ubyte_p)
+    inputImg.ppu8Plane[1] = cast(
+        addressof(inputImg.ppu8Plane[0].contents) +
+        (inputImg.pi32Pitch[0] * inputImg.i32Height), c_ubyte_p)
+    inputImg.ppu8Plane[2] = cast(
+        addressof(inputImg.ppu8Plane[1].contents) +
+        (inputImg.pi32Pitch[1] * inputImg.i32Height // 2), c_ubyte_p)
     inputImg.ppu8Plane[3] = cast(0, c_ubyte_p)
 
     inputImg.gc_ppu8Plane0 = bufferInfo.buffer
 
     return inputImg
 
+
+def get_feature_test(hFDEngine, hFREngine, imgFile):
+    """
+    获取图片特征值测试
+    """
+    faceInfos = doFaceDetection(hFDEngine, inputImgA)
+    if len(faceInfos) < 1:
+        print(u'no face in Image ')
+        return 0.0
+
+    # Extract Face Feature
+    faceFeature = extractFRFeature(hFREngine, imgFile, faceInfos[0])
+    if faceFeature == None:
+        print(u'extract face feature in Image faile')
+        return 0.0
+
+    feature = faceFeature.toByteArray()
+    filename = "feature.dat"
+
+    with open(filename, "wb") as f:
+        f.write(feature)
+        print("save face feature in feature.dat")
+        print("feature length:", len(feature), "Byte")
+
+    faceFeature.freeUnmanaged()
+
+
+if __name__ == u'__main__':
+
+    print(u'#####################################################')
+
+    # init Engine
+    pFDWorkMem = CLibrary.malloc(c_size_t(FD_WORKBUF_SIZE))
+    pFRWorkMem = CLibrary.malloc(c_size_t(FR_WORKBUF_SIZE))
+
+    hFDEngine = c_void_p()
+    ret = AFD_FSDK_InitialFaceEngine(
+        APPID, FD_SDKKEY, pFDWorkMem, c_int32(FD_WORKBUF_SIZE),
+        byref(hFDEngine), AFD_FSDK_OPF_0_HIGHER_EXT, 16, MAX_FACE_NUM)
+    if ret != 0:
+        CLibrary.free(pFDWorkMem)
+        print(u'AFD_FSDK_InitialFaceEngine ret 0x{:x}'.format(ret))
+        exit(0)
+
+    # print FDEngine version
+    versionFD = AFD_FSDK_GetVersion(hFDEngine)
+    print(u'AFD Version: {} {} {} {}'.format(
+        versionFD.contents.lCodebase, versionFD.contents.lMajor,
+        versionFD.contents.lMinor, versionFD.contents.lBuild))
+    print("Version:",
+          c_char_p(versionFD.contents.Version).value.decode(u'utf-8'))
+    print("BuildDate:",
+          c_char_p(versionFD.contents.BuildDate).value.decode(u'utf-8'))
+    print("CopyRight:",
+          c_char_p(versionFD.contents.CopyRight).value.decode(u'utf-8'))
+
+    hFREngine = c_void_p()
+    ret = AFR_FSDK_InitialEngine(APPID, FR_SDKKEY, pFRWorkMem,
+                                 c_int32(FR_WORKBUF_SIZE), byref(hFREngine))
+    if ret != 0:
+        AFD_FSDKLibrary.AFD_FSDK_UninitialFaceEngine(hFDEngine)
+        CLibrary.free(pFDWorkMem)
+        CLibrary.free(pFRWorkMem)
+        print(u'AFR_FSDK_InitialEngine ret 0x{:x}'.format(ret))
+        System.exit(0)
+
+    print("\r\n")
+    # print FREngine version
+    versionFR = AFR_FSDK_GetVersion(hFREngine)
+    print(u'AFR Version: {} {} {} {}'.format(
+        versionFR.contents.lCodebase, versionFR.contents.lMajor,
+        versionFR.contents.lMinor, versionFR.contents.lBuild))
+    print("Version:",
+          c_char_p(versionFR.contents.Version).value.decode(u'utf-8'))
+    print("BuildDate:",
+          c_char_p(versionFR.contents.BuildDate).value.decode(u'utf-8'))
+    print("CopyRight:",
+          c_char_p(versionFR.contents.CopyRight).value.decode(u'utf-8'))
+
+    # load Image Data
+    if bUseYUVFile:
+        filePathA = u'001_640x480_I420.YUV'
+        yuv_widthA = 640
+        yuv_heightA = 480
+        yuv_formatA = ASVL_COLOR_FORMAT.ASVL_PAF_I420
+
+        filePathB = u'003_640x480_I420.YUV'
+        yuv_widthB = 640
+        yuv_heightB = 480
+        yuv_formatB = ASVL_COLOR_FORMAT.ASVL_PAF_I420
+
+        inputImgA = loadYUVImage(filePathA, yuv_widthA, yuv_heightA,
+                                 yuv_formatA)
+        inputImgB = loadYUVImage(filePathB, yuv_widthB, yuv_heightB,
+                                 yuv_formatB)
+    else:
+        filePathA = u'lena.bmp'
+        filePathB = u'lena.bmp'
+
+        inputImgA = loadImage(filePathA)
+        inputImgB = loadImage(filePathB)
+
+    print(u'\r\nsimilarity between faceA and faceB is {0}'.format(
+        compareFaceSimilarity(hFDEngine, hFREngine, inputImgA, inputImgB)))
+
+    print("\r\n")
+    # 特征值获取
+    get_feature_test(hFDEngine, hFREngine, inputImgA)
+
+    # release Engine
+    AFD_FSDK_UninitialFaceEngine(hFDEngine)
+    AFR_FSDK_UninitialEngine(hFREngine)
+
+    CLibrary.free(pFDWorkMem)
+    CLibrary.free(pFRWorkMem)
+
+    print(u'#####################################################')

@@ -1,4 +1,6 @@
+.vscode
+__pycache__
 *.dll
 *.so
-.vscode/
+*.dat
 
