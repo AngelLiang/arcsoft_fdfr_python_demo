@@ -9,7 +9,7 @@ forked from [asdfqwrasdf/ArcSoft_FreeSDK_Demo/FR/python/](https://github.com/asd
 - CentOS 7.2 x64 + Python 3.5 
 - Windows 10 x64 + Python 3.5（32bit）
 
-注意事项：在Windows环境下，由于虹软DLL是32bit，所以Python必须也要32bit。
+注意事项：在Windows环境下，如果使用32位的DLL，Python也必须也要32位。
 
 # 第一步：安装依赖包
 
