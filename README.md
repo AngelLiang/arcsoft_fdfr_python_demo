@@ -69,7 +69,9 @@ feature length: 22020 Byte
 
 # 修改输入图片
 
-可以在`AFRTest.py`290行修改要输入的图片
+可以在`AFRTest.py`290行修改要输入的图片：
+
+BMP文件格式：
 
 ```Python
 # AFRTest.py 290行
@@ -80,5 +82,25 @@ inputImgA = loadImage(filePathA)
 inputImgB = loadImage(filePathB)
 ```
 
+yuv格式：
+
+```Python
+filePathA = u'lena_I420_fromBMP.yuv'
+yuv_widthA = 512
+yuv_heightA = 512
+yuv_formatA = ASVL_COLOR_FORMAT.ASVL_PAF_I420
+
+filePathB = u'lena_I420_fromBMP.yuv'
+yuv_widthB = 512
+yuv_heightB = 512
+yuv_formatB = ASVL_COLOR_FORMAT.ASVL_PAF_I420
+
+inputImgA = loadYUVImage(filePathA, yuv_widthA, yuv_heightA,
+                            yuv_formatA)
+inputImgB = loadYUVImage(filePathB, yuv_widthB, yuv_heightB,
+                            yuv_formatB)
+```
+
+使用`ffmpeg -i lena.bmp -pix_fmt yuv420p lena_I420_fromBMP.yuv`命令转换
 
 

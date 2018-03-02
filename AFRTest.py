@@ -15,7 +15,7 @@ FD_WORKBUF_SIZE = 20 * 1024 * 1024
 FR_WORKBUF_SIZE = 40 * 1024 * 1024
 MAX_FACE_NUM = 50
 
-bUseYUVFile = False
+bUseYUVFile = 0
 
 
 def doFaceDetection(hFDEngine, inputImg):
@@ -288,14 +288,14 @@ if __name__ == u'__main__':
 
     # load Image Data
     if bUseYUVFile:
-        filePathA = u'001_640x480_I420.YUV'
-        yuv_widthA = 640
-        yuv_heightA = 480
+        filePathA = u'lena_I420_fromBMP.yuv'
+        yuv_widthA = 512
+        yuv_heightA = 512
         yuv_formatA = ASVL_COLOR_FORMAT.ASVL_PAF_I420
 
-        filePathB = u'003_640x480_I420.YUV'
-        yuv_widthB = 640
-        yuv_heightB = 480
+        filePathB = u'lena_I420_fromBMP.yuv'
+        yuv_widthB = 512
+        yuv_heightB = 512
         yuv_formatB = ASVL_COLOR_FORMAT.ASVL_PAF_I420
 
         inputImgA = loadYUVImage(filePathA, yuv_widthA, yuv_heightA,
