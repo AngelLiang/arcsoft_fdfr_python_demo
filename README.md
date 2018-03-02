@@ -8,6 +8,7 @@ forked from [asdfqwrasdf/ArcSoft_FreeSDK_Demo/FR/python/](https://github.com/asd
 
 - CentOS 7.2 x64 + Python 3.5 
 - Windows 10 x64 + Python 3.5（32bit）
+- Windows 10 x64 + Python 3.5（64bit）
 
 注意事项：在Windows环境下，如果使用32位的DLL，Python也必须也要32位。
 

@@ -1,15 +1,20 @@
 ﻿#-*- encoding=utf-8 -*-
+
 from PIL import Image
 from . import BufferInfo
 
+
 def BGRA2I420(img, width, height):
+    """
+    BGRA转换为I420
+    """
     yuv = bytearray(width * height * 3 // 2)
     u_offset = width * height
     y_offset = width * height * 5 // 4
 
     for i in range(0, height):
         for j in range(0, width):
-            rgb = img.getpixel((j,i))
+            rgb = img.getpixel((j, i))
             r = rgb[0]
             g = rgb[1]
             b = rgb[2]
@@ -30,9 +35,12 @@ def BGRA2I420(img, width, height):
 
 
 def getI420FromFile(filePath):
+    """
+    从文件中获取I420数据
+    """
     img = Image.open(filePath).convert('RGB')
-    w = img.width& 0xFFFFFFFE
-    h = img.height& 0xFFFFFFFE
+    w = img.width & 0xFFFFFFFE
+    h = img.height & 0xFFFFFFFE
     yuv = BGRA2I420(img, w, h)
 
     return BufferInfo(w, h, yuv)
