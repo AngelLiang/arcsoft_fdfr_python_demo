@@ -4,7 +4,7 @@ forked from [asdfqwrasdf/ArcSoft_FreeSDK_Demo/FR/python/](https://github.com/asd
 
 基于上面代码进行修改。
 
-# 已测试过的环境
+## 已测试过的环境
 
 - CentOS 7.2 x64 + Python 3.5 
 - Windows 10 x64 + Python 3.5（32bit）
@@ -12,7 +12,7 @@ forked from [asdfqwrasdf/ArcSoft_FreeSDK_Demo/FR/python/](https://github.com/asd
 
 注意事项：在Windows环境下，如果使用32位的DLL，Python也必须也要32位。
 
-# 第一步：安装依赖包
+## 第一步：安装依赖包
 
 首先需要安装依赖包（也就一个Pillow）
 
@@ -22,15 +22,15 @@ pip install -r requirements.txt
 pip install Pillow
 ```
 
-# 第二步：导入库文件
+## 第二步：导入库文件
 
 然后将虹软SDK中的DLL拷贝到`arcsoft\lib\`相关目录下，确保相关系统有detection和recognition两个库文件：
 
 ![lib](screenshot/lib.png)
 
-# 第三步：填写信息
+## 第三步：填写信息
 
-填写APPID、FD_SDKKEY和FR_SDKKEY。
+填写`APPID`、`FD_SDKKEY`和`FR_SDKKEY`。
 
 ```Python
 APPID = c_char_p(b'APPID')
@@ -38,11 +38,11 @@ FD_SDKKEY = c_char_p(b'FD_SDKKEY')
 FR_SDKKEY = c_char_p(b'FR_SDKKEY')
 ```
 
-# 第三步：完成，运行测试
+## 第三步：完成，运行测试
 
 执行`python3 AFRTest.py`，成功的话会输出下面信息：
 
-```sh
+```PowerShell
 > python3 AFRTest.py
 #####################################################
 AFD Version: 1 1 0 81
@@ -67,7 +67,7 @@ feature length: 22020 Byte
 同时在当前目录下会生成`feature.dat`文件，里面保存了人脸特征值，大小为22020 Byte。
 
 
-# 修改输入图片
+## 修改输入图片
 
 可以在`AFRTest.py`290行修改要输入的图片：
 
@@ -103,4 +103,7 @@ inputImgB = loadYUVImage(filePathB, yuv_widthB, yuv_heightB,
 
 使用`ffmpeg -i lena.bmp -pix_fmt yuv420p lena_I420_fromBMP.yuv`命令转换
 
+## 其他信息
+
+虹软官方SDK下载地址：http://www.arcsoft.com.cn/ai/arcface.html
 
